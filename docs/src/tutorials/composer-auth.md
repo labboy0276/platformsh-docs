@@ -34,10 +34,33 @@ Set the Composer authentication by adding a project level variable called `env:C
 
 That can be done through the [management console](/administration/web/) or via the command line, like so:
 
+**Basic Auth**
+
 ```bash
 platform variable:create --level project --name env:COMPOSER_AUTH \
   --json true --visible-runtime false --sensitive true --visible-build true 
   --value '{"http-basic": {"my-private-repos.example.com": {"username": "your-username", "password": "your-password"}}}'
+```
+**GitHub OAuth Token**
+
+1. Visit [https://github.com/settings/tokens](https://github.com/settings/tokens).
+
+2. Click **Generate new token**
+
+3. Use the repo scope and give it a name.
+
+4. Run this command:
+
+```bash
+platform variable:create --project PROJECT-ID --level project --name env:COMPOSER_AUTH \
+  --json true --visible-runtime false --sensitive true --visible-build true \
+  --value '{"github-oauth": {"github.com": "YOUR-TOKEN"}}'
+```
+
+4. Clear the build cache with:
+
+```bash
+platform project:clear-build-cache --project PROJECT-ID
 ```
 
 The `env:` prefix will make that variable appear as its own Unix environment variable available by Composer during the build process. The optional `--no-visible-runtime` flag means the variable will only be defined during the build hook, which offers slightly better security.
